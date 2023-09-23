@@ -3,7 +3,6 @@ import 'package:auth_feature_repository_base/user_model.dart';
 abstract class AuthFeatureRepositoryBase{
   //example of an abstract repository which the data layer will implement
 
-  Future<void> initialize();
   //getters
   String? get userId;
 
