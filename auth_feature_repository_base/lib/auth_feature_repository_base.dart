@@ -1,4 +1,4 @@
-import 'package:auth_feature_repository_base/user_model.dart';
+import 'package:auth_feature_repository_base/auth_user_model.dart';
 
 abstract class AuthFeatureRepositoryBase{
   //example of an abstract repository which the data layer will implement
