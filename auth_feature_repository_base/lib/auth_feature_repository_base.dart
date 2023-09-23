@@ -3,13 +3,7 @@ import 'package:auth_feature_repository_base/auth_user_model.dart';
 abstract class AuthFeatureRepositoryBase{
   //example of an abstract repository which the data layer will implement
 
-  //getters
-  String? get userId;
-
-  bool get isAlreadyLoggedIn;
-
-  String get displayName;
-
+   AuthUser get authUser;
   //Notifies when the authentication status changes.
   Stream<AuthUser> get authStateChanges;
 
