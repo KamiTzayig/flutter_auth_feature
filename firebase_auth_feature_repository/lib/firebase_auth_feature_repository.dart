@@ -2,13 +2,14 @@ import 'package:auth_feature_repository_base/auth_feature_repository_base.dart';
 import 'package:auth_feature_repository_base/auth_user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 import 'firebase_auth_user_model.dart';
 
 class FirebaseAuthFeatureRepository extends AuthFeatureRepositoryBase {
   //implement singleton pattern
   static final FirebaseAuthFeatureRepository _singleton =
-      new FirebaseAuthFeatureRepository._internal();
+      FirebaseAuthFeatureRepository._internal();
 
   FirebaseAuthFeatureRepository._internal();
 
@@ -29,36 +30,28 @@ class FirebaseAuthFeatureRepository extends AuthFeatureRepositoryBase {
       });
 
   @override
-  String? get userId => _auth.currentUser?.uid;
-
-
-  @override
-  // TODO: implement displayName
-  String get displayName => throw UnimplementedError();
-
-  @override
-  // TODO: implement isAlreadyLoggedIn
-  bool get isAlreadyLoggedIn => throw UnimplementedError();
-
+  AuthUser get authUser => FirebaseAuthUser.fromFirebaseUser(user: _auth.currentUser);
   @override
   Future<void> signUpWithEmailAndPassword(
-      {required String email, required String password}) {
-    // TODO: implement signUpWithEmailAndPassword
-    throw UnimplementedError();
+      {required String email, required String password}) async {
+    await _auth.createUserWithEmailAndPassword(email: email, password: password);
   }
 
   @override
   Future<void> signInWithEmailAndPassword(
-      {required String email, required String password}) {
-    // TODO: implement signInWithEmailAndPassword
-    throw UnimplementedError();
+      {required String email, required String password}) async{
+ await _auth.signInWithEmailAndPassword(email: email, password: password);
   }
 
   @override
-  Future<void> verifyEmail({required String email}) {
-    // TODO: implement verifyEmail
-    throw UnimplementedError();
+  Future<void> verifyEmail({required String email}) async{
+    try {
+      _auth.currentUser!.sendEmailVerification();
+    } catch (e) {
+      rethrow;
+    }
   }
+
 
   @override
   Future<void> signInWithPhoneNumber({required String phoneNumber}) {
@@ -73,14 +66,27 @@ class FirebaseAuthFeatureRepository extends AuthFeatureRepositoryBase {
   }
 
   @override
-  Future<void> signInWithGoogle() {
-    // TODO: implement signInWithGoogle
-    throw UnimplementedError();
+  Future<void> signInWithGoogle() async{
+    // Trigger the authentication flow
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+    // Obtain the auth details from the request
+    final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
+
+    // Create a new credential
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken,
+    );
+
+
+     await _auth.signInWithCredential(credential);
   }
 
   @override
-  Future<void> signOut() {
-    // TODO: implement signOut
-    throw UnimplementedError();
+  Future<void> signOut() async{
+   await _auth.signOut();
   }
+
+
 }
