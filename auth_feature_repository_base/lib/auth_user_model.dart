@@ -17,7 +17,7 @@ abstract class AuthUser extends Equatable{
   });
   AuthUser unknown();
   AuthUser copyWith();
-  AuthUser fromJson();
+  AuthUser fromJson(Map<String, dynamic> json);
   Map<String, dynamic> toJson();
   @override
   List<Object?> get props;

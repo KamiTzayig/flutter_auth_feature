@@ -1,13 +1,11 @@
 import 'package:auth_feature_repository_base/auth_user_model.dart';
 
-import 'authState.dart';
 
 abstract class AuthFeatureRepositoryBase{
   //example of an abstract repository which the data layer will implement
 
    AuthUser get authUser;
   //Notifies when the authentication status changes.
-  Stream<AuthState> get authStateChanges;
   Stream<AuthUser> get authUserStream;
 
   Future<void> signUpWithEmailAndPassword({

@@ -1,16 +1,16 @@
 class AuthFailure{
   final String authFailureCode;
-  final AuthType authType;
+  final AuthProviderType authProviderType;
 
   const AuthFailure({
     required this.authFailureCode,
-    required this.authType,
+    required this.authProviderType,
   });
 
 }
 //replace the following enum with a map to string of the same values
 
-enum AuthType {
+enum AuthProviderType {
   none,
   email,
   phone,
