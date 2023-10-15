@@ -7,11 +7,15 @@ class FirebaseAuthUser extends AuthUser {
     required String userId,
     required String phoneNumber,
     required String fullName,
+    required String email,
+    required bool emailIsVerified,
   }) : super(
-          userId: userId,
-          phoneNumber: phoneNumber,
-          fullName: fullName,
-        );
+    userId: userId,
+    phoneNumber: phoneNumber,
+    fullName: fullName,
+    email: email,
+    emailIsVerified: emailIsVerified,
+  );
 
   factory FirebaseAuthUser.fromFirebaseUser({User? user}) {
     if (user == null) {
@@ -19,22 +23,69 @@ class FirebaseAuthUser extends AuthUser {
         userId: "",
         phoneNumber: "",
         fullName: "",
+        email: "",
+        emailIsVerified: false,
       );
     }
     return FirebaseAuthUser(
       userId: user.uid,
       phoneNumber: user.phoneNumber ?? "",
       fullName: user.displayName ?? "",
+      email: user.email ?? "",
+      emailIsVerified: user.emailVerified,
     );
   }
 
   @override
   Map<String, dynamic> toJson() {
-  return {
-    "userId": userId,
-    "phoneNumber": phoneNumber,
-    "fullName": fullName,
-  };
+    return {
+      "userId": userId,
+      "phoneNumber": phoneNumber,
+      "fullName": fullName,
+      "email": email,
+      "emailIsVerified": emailIsVerified,
+    };
   }
 
+  @override
+  AuthUser copyWith({
+    String? userId,
+    String? phoneNumber,
+    String? fullName,
+    String? email,
+    bool? emailIsVerified,
+  }) {
+    return FirebaseAuthUser(
+      userId: userId ?? this.userId,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
+      fullName: fullName ?? this.fullName,
+      email: email ?? this.email,
+      emailIsVerified: emailIsVerified ?? this.emailIsVerified,
+    );
+  }
+
+  @override
+  AuthUser fromJson(Map<String, dynamic> json) {
+    return FirebaseAuthUser(
+      userId: json["userId"],
+      phoneNumber: json["phoneNumber"],
+      fullName: json["fullName"],
+      email: json["email"],
+      emailIsVerified: json["emailIsVerified"],
+    );
+  }
+
+  @override
+  List<Object?> get props => [userId, phoneNumber, fullName, email, emailIsVerified];
+
+  @override
+  AuthUser unknown() {
+    return FirebaseAuthUser(
+      userId: "",
+      phoneNumber: "",
+      fullName: "",
+      email: "",
+      emailIsVerified: false,
+    );
+  }
 }

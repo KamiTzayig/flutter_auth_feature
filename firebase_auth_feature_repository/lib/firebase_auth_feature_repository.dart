@@ -23,8 +23,9 @@ class FirebaseAuthFeatureRepository extends AuthFeatureRepositoryBase {
     );
     _auth = FirebaseAuth.instance;
   }
+
   @override
-  Stream<AuthUser> get authStateChanges =>
+  Stream<AuthUser> get authUserStream=>
       _auth.authStateChanges().map<AuthUser>((User? user) {
         return FirebaseAuthUser.fromFirebaseUser(user: user);
       });
