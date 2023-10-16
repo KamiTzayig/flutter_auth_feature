@@ -2,7 +2,7 @@ class AuthFailure {
   final String authFailureCode;
   final AuthProviderType authProviderType;
 
-  final String message;
+  final String? message;
 
   const AuthFailure({
     required this.authFailureCode,
