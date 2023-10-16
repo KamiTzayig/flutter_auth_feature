@@ -2,9 +2,12 @@ class AuthFailure {
   final String authFailureCode;
   final AuthProviderType authProviderType;
 
+  final String message;
+
   const AuthFailure({
     required this.authFailureCode,
     required this.authProviderType,
+    required this.message,
   });
 }
 //replace the following enum with a map to string of the same values
