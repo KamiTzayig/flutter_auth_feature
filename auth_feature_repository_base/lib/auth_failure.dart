@@ -9,6 +9,11 @@ class AuthFailure {
     required this.authProviderType,
     required this.message,
   });
+
+  AuthFailure.unknown():
+        authFailureCode = AuthFailureCode.unknown,
+        authProviderType = AuthProviderType.none,
+        message = '';
 }
 //replace the following enum with a map to string of the same values
 
