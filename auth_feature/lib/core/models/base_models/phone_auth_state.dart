@@ -1,10 +1,10 @@
 
-import 'package:auth_feature_repository_base/authFailure.dart';
+import 'package:auth_feature_repository_base/auth_failure.dart';
 
 import 'authState.dart';
 
 
-abstract class PhoneAuthState extends AuthState {
+ class PhoneAuthState extends AuthState {
   final String phoneNumber;
   final String smsCode;
 
@@ -18,8 +18,27 @@ abstract class PhoneAuthState extends AuthState {
           authFailure: authFailure,
         );
 
-  PhoneAuthState unknown();
-  PhoneAuthState copyWith();
+  PhoneAuthState.unknown():
+        phoneNumber = '',
+        smsCode = '',
+        super(
+          isLoading: false,
+          authFailure: AuthFailure.unknown(),
+        );
+  @override
+  PhoneAuthState copyWith({
+    String? phoneNumber,
+    String? smsCode,
+    bool? isLoading,
+    AuthFailure? authFailure,
+  }) {
+    return PhoneAuthState(
+      phoneNumber: phoneNumber ?? this.phoneNumber,
+      smsCode: smsCode ?? this.smsCode,
+      isLoading: isLoading ?? this.isLoading,
+      authFailure: authFailure ?? this.authFailure,
+    );
+  }
   @override
   List<Object?> get props => [phoneNumber, smsCode, isLoading, authFailure];
 }

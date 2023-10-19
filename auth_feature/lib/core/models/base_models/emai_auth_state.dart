@@ -1,5 +1,5 @@
 
-import 'package:auth_feature_repository_base/authFailure.dart';
+import 'package:auth_feature_repository_base/auth_failure.dart';
 
 import 'authState.dart';
 
@@ -16,7 +16,6 @@ class EmailAuthState extends AuthState{
     isLoading: isLoading,
     authFailure: authFailure,
   );
-
   EmailAuthState.unknown():
         email = '',
         password = '',
@@ -24,7 +23,21 @@ class EmailAuthState extends AuthState{
           isLoading: false,
           authFailure: AuthFailure.unknown(),
         );
-  EmailAuthState copyWith();
+  @override
+  EmailAuthState copyWith({
+    String? email,
+    String? password,
+    bool? isLoading,
+    AuthFailure? authFailure,
+  }) {
+    return EmailAuthState(
+      email: email ?? this.email,
+      password: password ?? this.password,
+      isLoading: isLoading ?? this.isLoading,
+      authFailure: authFailure ?? this.authFailure,
+    );
+  }
   @override
   List<Object?> get props => [email, password, isLoading, authFailure];
+
 }

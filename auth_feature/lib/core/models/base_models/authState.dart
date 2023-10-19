@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:auth_feature_repository_base/authFailure.dart';
+import 'package:auth_feature_repository_base/auth_failure.dart';
 
 // a class containing authentication process state
 abstract class AuthState extends Equatable{
@@ -13,8 +13,6 @@ abstract class AuthState extends Equatable{
     required this.isLoading,
     required this.authFailure,
   });
-
-  AuthState unknown();
   AuthState copyWith();
   @override
   List<Object?> get props;
