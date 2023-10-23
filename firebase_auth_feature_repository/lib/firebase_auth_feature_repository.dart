@@ -1,4 +1,4 @@
-import 'package:auth_feature_repository_base/authFailure.dart';
+import 'package:auth_feature_repository_base/auth_failure.dart';
 import 'package:auth_feature_repository_base/auth_feature_repository_base.dart';
 import 'package:auth_feature_repository_base/auth_user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
