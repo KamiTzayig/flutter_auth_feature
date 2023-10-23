@@ -1,4 +1,5 @@
 import 'package:auth_feature/core/models/base_models/emai_auth_state.dart';
+import 'package:auth_feature_repository_base/auth_failure.dart';
 import 'package:auth_feature_repository_base/auth_user_model.dart';
 import 'package:flutter/material.dart';
 import '../../../core/providers/auth_user_stream_provider.dart';
@@ -15,6 +16,7 @@ class EmailAuthBody extends ConsumerWidget {
         emailAuthStateNotifierProvider);
     final bool isLoading = emailAuthState.isLoading;
     final AsyncValue<AuthUser> user = ref.watch(authUserStreamProvider);
+    final AuthFailure authFailure = emailAuthState.authFailure;
     return Column(
       children: [
         user.when(data: (user) => Text(user.userId),
@@ -70,7 +72,8 @@ class EmailAuthBody extends ConsumerWidget {
             ],
           ),
 
-
+if(authFailure.authFailureCode!=AuthFailureCode.none)
+        Text(authFailure.toString()),
       ],);
   }
 }
