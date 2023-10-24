@@ -1,3 +1,5 @@
+import 'dart:io' show Platform;
+
 import 'package:auth_feature_repository_base/auth_failure.dart';
 import 'package:auth_feature_repository_base/auth_feature_repository_base.dart';
 import 'package:auth_feature_repository_base/auth_user_model.dart';
@@ -99,24 +101,56 @@ class FirebaseAuthFeatureRepository extends AuthFeatureRepositoryBase {
 
   @override
   Future<void> signInWithGoogle({List<String>? scopes}) async {
-    try {
-      GoogleSignIn _googleSignIn = GoogleSignIn(
-        scopes: scopes??<String>[],
-      );
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth?.accessToken,
-        idToken: googleAuth?.idToken,
-      );
-      await _auth.signInWithCredential(credential);
-    } on FirebaseAuthException catch (e) {
-      String code = AuthFailureCode().fromStringCode(e.code);
-      AuthFailure authFailure = AuthFailure(authFailureCode: code, authProviderType: AuthProviderType.google , message: e.message);
-      throw authFailure;
-    } catch (e) {
-      throw AuthFailure(authFailureCode: AuthFailureCode.unknown, authProviderType: AuthProviderType.google , message: e.toString());
+    // check if platfrom is web or not
+    if (Platform.isAndroid || Platform.isIOS) {
+      //platform is mobile
+      try {
+        GoogleSignIn _googleSignIn = GoogleSignIn(
+          scopes: scopes??<String>[],
+        );
+        final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+        final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
+        final credential = GoogleAuthProvider.credential(
+          accessToken: googleAuth?.accessToken,
+          idToken: googleAuth?.idToken,
+        );
+        await _auth.signInWithCredential(credential);
+      } on FirebaseAuthException catch (e) {
+        String code = AuthFailureCode().fromStringCode(e.code);
+        AuthFailure authFailure = AuthFailure(authFailureCode: code, authProviderType: AuthProviderType.google , message: e.message);
+        throw authFailure;
+      } catch (e) {
+        throw AuthFailure(authFailureCode: AuthFailureCode.unknown, authProviderType: AuthProviderType.google , message: e.toString());
+      }
     }
+
+    if (!Platform.isAndroid && !Platform.isIOS && !Platform.isFuchsia && !Platform.isLinux && !Platform.isMacOS && !Platform.isWindows) {
+      //platform is web
+      // Create a new provider
+      try {
+        GoogleAuthProvider googleProvider = GoogleAuthProvider();
+
+        googleProvider.addScope(
+            'https://www.googleapis.com/auth/contacts.readonly');
+        googleProvider.setCustomParameters({
+          'login_hint': 'user@example.com'
+        });
+
+        // Once signed in, return the UserCredential
+        await FirebaseAuth.instance.signInWithPopup(googleProvider);
+      } on FirebaseAuthException catch (e) {
+        String code = AuthFailureCode().fromStringCode(e.code);
+        AuthFailure authFailure = AuthFailure(authFailureCode: code, authProviderType: AuthProviderType.google , message: e.message);
+        throw authFailure;
+      } catch (e) {
+        throw AuthFailure(authFailureCode: AuthFailureCode.unknown, authProviderType: AuthProviderType.google , message: e.toString());
+      }
+      // Or use signInWithRedirect
+      // return await FirebaseAuth.instance.signInWithRedirect(googleProvider);
+    }
+
+
+
   }
 
   @override
