@@ -98,9 +98,12 @@ class FirebaseAuthFeatureRepository extends AuthFeatureRepositoryBase {
   }
 
   @override
-  Future<void> signInWithGoogle() async {
+  Future<void> signInWithGoogle({List<String>? scopes}) async {
     try {
-      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      GoogleSignIn _googleSignIn = GoogleSignIn(
+        scopes: scopes??<String>[],
+      );
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
       final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth?.accessToken,
