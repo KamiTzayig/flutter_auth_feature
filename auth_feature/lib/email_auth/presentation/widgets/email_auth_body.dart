@@ -73,7 +73,8 @@ class EmailAuthBody extends ConsumerWidget {
           ),
 
 if(authFailure.authFailureCode!=AuthFailureCode.none)
-        Text(authFailure.authFailureCode),
+        ...[Text(authFailure.authFailureCode),
+        Text(authFailure.message??'-')]
       ],);
   }
 }
