@@ -33,7 +33,7 @@ class AuthFailureCode {
   static const String unknown = 'unknown';
   static const String server_error = 'serverError';
 
-  static const String network_error = 'networkError';
+  static const String network_request_failed = 'networkRequestError';
 
   static const String too_many_requests = 'tooManyRequests';
   static const String invalid_mail = 'invalidMail';
@@ -78,6 +78,8 @@ class AuthFailureCode {
         return invalid_verification_code;
       case 'invalid-verification-id':
         return invalid_verification_id;
+      case 'network-request-failed':
+        return network_request_failed;
 
       default:
         print('AuthFailure unknown code: $code');
