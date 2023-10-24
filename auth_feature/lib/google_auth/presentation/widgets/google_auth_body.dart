@@ -1,4 +1,5 @@
 import 'package:auth_feature/core/models/base_models/google_auth_state.dart';
+import 'package:auth_feature_repository_base/auth_failure.dart';
 import 'package:flutter/material.dart';
 import '../../application/state.dart';
 
@@ -17,6 +18,8 @@ class GoogleAuthBody extends ConsumerWidget {
     final GoogleAuthState googleAuthState = ref.watch(
         googleAuthStateNotifierProvider);
     final bool isLoading = googleAuthState.isLoading;
+    final AuthFailure authFailure = googleAuthState.authFailure;
+
     return Column(
       children: [
         if (isLoading)
@@ -30,6 +33,8 @@ class GoogleAuthBody extends ConsumerWidget {
             },
             child: const Text("Sign In With Google"),
           ),
+        if (authFailure.authFailureCode != AuthFailureCode.none)
+          Text(authFailure.authFailureCode + " === " + authFailure.message.toString())
       ],
     );
   }
