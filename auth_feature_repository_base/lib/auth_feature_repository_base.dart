@@ -20,7 +20,7 @@ abstract class AuthFeatureRepositoryBase{
   Future<void> verifyEmail({
     required String email,
   });
-  Future<void> signInWithGoogle(List<String>? scopes);
+  Future<void> signInWithGoogle({List<String>? scopes});
 
   Future<void> signInWithPhoneNumber({
     required String phoneNumber,
