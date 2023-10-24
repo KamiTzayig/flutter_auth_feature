@@ -11,7 +11,7 @@ class AuthFailure {
   });
 
   AuthFailure.unknown():
-        authFailureCode = AuthFailureCode.unknown,
+        authFailureCode = AuthFailureCode.none,
         authProviderType = AuthProviderType.none,
         message = '';
 }
@@ -32,6 +32,9 @@ class AuthFailureCode {
   static const String none = 'none';
   static const String unknown = 'unknown';
   static const String server_error = 'serverError';
+
+  static const String network_error = 'networkError';
+
   static const String too_many_requests = 'tooManyRequests';
   static const String invalid_mail = 'invalidMail';
   static const String mail_already_in_use = 'mailAlreadyInUse';
@@ -75,7 +78,9 @@ class AuthFailureCode {
         return invalid_verification_code;
       case 'invalid-verification-id':
         return invalid_verification_id;
+
       default:
+        print('AuthFailure unknown code: $code');
         return unknown;
     }
   }
