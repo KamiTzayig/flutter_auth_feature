@@ -7,7 +7,7 @@ part of 'email_auth_state_notifier.dart';
 // **************************************************************************
 
 String _$emailAuthStateNotifierHash() =>
-    r'be1546e1c3fccf99d5ed8c46d10deb57c5ebe6f9';
+    r'62a5df6510663279deb556a941e49f1bf766fa43';
 
 /// See also [EmailAuthStateNotifier].
 @ProviderFor(EmailAuthStateNotifier)

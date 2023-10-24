@@ -17,6 +17,7 @@ class EmailAuthBody extends ConsumerWidget {
     final bool isLoading = emailAuthState.isLoading;
     final AsyncValue<AuthUser> user = ref.watch(authUserStreamProvider);
     final AuthFailure authFailure = emailAuthState.authFailure;
+
     return Column(
       children: [
         user.when(data: (user) => Text(user.userId),
