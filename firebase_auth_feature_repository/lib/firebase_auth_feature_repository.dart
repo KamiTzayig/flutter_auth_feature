@@ -5,14 +5,13 @@ import 'package:auth_feature_repository_base/auth_feature_repository_base.dart';
 import 'package:auth_feature_repository_base/auth_user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
 import 'firebase_auth_user_model.dart';
 
 class FirebaseAuthFeatureRepository extends AuthFeatureRepositoryBase {
   //implement singleton pattern
   static final FirebaseAuthFeatureRepository _singleton =
-      FirebaseAuthFeatureRepository._internal();
+  FirebaseAuthFeatureRepository._internal();
 
   FirebaseAuthFeatureRepository._internal();
 
@@ -20,21 +19,34 @@ class FirebaseAuthFeatureRepository extends AuthFeatureRepositoryBase {
 
   late FirebaseAuth _auth;
 
+  bool isWeb = false;
+
   Future<void> initialize(FirebaseOptions? options) async {
     await Firebase.initializeApp(
       options: options,
     );
     _auth = FirebaseAuth.instance;
+
+    try {
+      if (!Platform.isAndroid && !Platform.isIOS && !Platform.isFuchsia &&
+          !Platform.isLinux && !Platform.isMacOS && !Platform.isWindows) {
+        isWeb = true;
+      }
+    } catch (e) {
+      //platform is web
+      isWeb = true;
+    }
   }
 
   @override
-  Stream<AuthUser> get authUserStream=>
+  Stream<AuthUser> get authUserStream =>
       _auth.authStateChanges().map<AuthUser>((User? user) {
         return FirebaseAuthUser.fromFirebaseUser(user: user);
       });
 
   @override
-  AuthUser get authUser => FirebaseAuthUser.fromFirebaseUser(user: _auth.currentUser);
+  AuthUser get authUser =>
+      FirebaseAuthUser.fromFirebaseUser(user: _auth.currentUser);
 
   @override
   Future<void> signUpWithEmailAndPassword(
@@ -42,25 +54,34 @@ class FirebaseAuthFeatureRepository extends AuthFeatureRepositoryBase {
     try {
       await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
-    } on FirebaseAuthException catch (e){
+    } on FirebaseAuthException catch (e) {
       String code = AuthFailureCode().fromStringCode(e.code);
-      AuthFailure authFailure = AuthFailure(authFailureCode: code, authProviderType: AuthProviderType.email, message: e.message);
+      AuthFailure authFailure = AuthFailure(authFailureCode: code,
+          authProviderType: AuthProviderType.email,
+          message: e.message);
       throw authFailure;
-    } catch(e){
-      throw AuthFailure(authFailureCode: AuthFailureCode.unknown, authProviderType: AuthProviderType.email, message: e.toString());
+    } catch (e) {
+      throw AuthFailure(authFailureCode: AuthFailureCode.unknown,
+          authProviderType: AuthProviderType.email,
+          message: e.toString());
     }
-
   }
-    @override
-  Future<void> signInWithEmailAndPassword({required String email, required String password}) async {
+
+  @override
+  Future<void> signInWithEmailAndPassword(
+      {required String email, required String password}) async {
     try {
       await _auth.signInWithEmailAndPassword(email: email, password: password);
     } on FirebaseAuthException catch (e) {
       String code = AuthFailureCode().fromStringCode(e.code);
-      AuthFailure authFailure = AuthFailure(authFailureCode: code, authProviderType: AuthProviderType.email, message: e.message);
+      AuthFailure authFailure = AuthFailure(authFailureCode: code,
+          authProviderType: AuthProviderType.email,
+          message: e.message);
       throw authFailure;
     } catch (e) {
-      throw AuthFailure(authFailureCode: AuthFailureCode.unknown, authProviderType: AuthProviderType.email, message: e.toString());
+      throw AuthFailure(authFailureCode: AuthFailureCode.unknown,
+          authProviderType: AuthProviderType.email,
+          message: e.toString());
     }
   }
 
@@ -69,7 +90,9 @@ class FirebaseAuthFeatureRepository extends AuthFeatureRepositoryBase {
     try {
       await _auth.currentUser!.sendEmailVerification();
     } catch (e) {
-      throw AuthFailure(authFailureCode: AuthFailureCode.unknown, authProviderType: AuthProviderType.email, message: e.toString());
+      throw AuthFailure(authFailureCode: AuthFailureCode.unknown,
+          authProviderType: AuthProviderType.email,
+          message: e.toString());
     }
   }
 
@@ -79,10 +102,14 @@ class FirebaseAuthFeatureRepository extends AuthFeatureRepositoryBase {
       // Your implementation for phone number sign-in here
     } on FirebaseAuthException catch (e) {
       String code = AuthFailureCode().fromStringCode(e.code);
-      AuthFailure authFailure = AuthFailure(authFailureCode: code, authProviderType: AuthProviderType.phone , message: e.message);
+      AuthFailure authFailure = AuthFailure(authFailureCode: code,
+          authProviderType: AuthProviderType.phone,
+          message: e.message);
       throw authFailure;
     } catch (e) {
-      throw AuthFailure(authFailureCode: AuthFailureCode.unknown, authProviderType: AuthProviderType.phone , message: e.toString());
+      throw AuthFailure(authFailureCode: AuthFailureCode.unknown,
+          authProviderType: AuthProviderType.phone,
+          message: e.toString());
     }
   }
 
@@ -92,42 +119,23 @@ class FirebaseAuthFeatureRepository extends AuthFeatureRepositoryBase {
       // Your implementation for verifying SMS code here
     } on FirebaseAuthException catch (e) {
       String code = AuthFailureCode().fromStringCode(e.code);
-      AuthFailure authFailure = AuthFailure(authFailureCode: code, authProviderType: AuthProviderType.phone , message: e.message);
+      AuthFailure authFailure = AuthFailure(authFailureCode: code,
+          authProviderType: AuthProviderType.phone,
+          message: e.message);
       throw authFailure;
     } catch (e) {
-      throw AuthFailure(authFailureCode: AuthFailureCode.unknown, authProviderType: AuthProviderType.phone  , message: e.toString());
+      throw AuthFailure(authFailureCode: AuthFailureCode.unknown,
+          authProviderType: AuthProviderType.phone,
+          message: e.toString());
     }
   }
 
   @override
   Future<void> signInWithGoogle({List<String>? scopes}) async {
-    // check if platfrom is web or not
-    if (Platform.isAndroid || Platform.isIOS) {
-      //platform is mobile
-      try {
-        GoogleSignIn _googleSignIn = GoogleSignIn(
-          scopes: scopes??<String>[],
-        );
-        final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-        final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
-        final credential = GoogleAuthProvider.credential(
-          accessToken: googleAuth?.accessToken,
-          idToken: googleAuth?.idToken,
-        );
-        await _auth.signInWithCredential(credential);
-      } on FirebaseAuthException catch (e) {
-        String code = AuthFailureCode().fromStringCode(e.code);
-        AuthFailure authFailure = AuthFailure(authFailureCode: code, authProviderType: AuthProviderType.google , message: e.message);
-        throw authFailure;
-      } catch (e) {
-        throw AuthFailure(authFailureCode: AuthFailureCode.unknown, authProviderType: AuthProviderType.google , message: e.toString());
-      }
-    }
 
-    if (!Platform.isAndroid && !Platform.isIOS && !Platform.isFuchsia && !Platform.isLinux && !Platform.isMacOS && !Platform.isWindows) {
-      //platform is web
-      // Create a new provider
-      try {
+    // Create a new provider
+    try {
+      if(isWeb) {
         GoogleAuthProvider googleProvider = GoogleAuthProvider();
 
         googleProvider.addScope(
@@ -138,29 +146,35 @@ class FirebaseAuthFeatureRepository extends AuthFeatureRepositoryBase {
 
         // Once signed in, return the UserCredential
         await FirebaseAuth.instance.signInWithPopup(googleProvider);
-      } on FirebaseAuthException catch (e) {
-        String code = AuthFailureCode().fromStringCode(e.code);
-        AuthFailure authFailure = AuthFailure(authFailureCode: code, authProviderType: AuthProviderType.google , message: e.message);
-        throw authFailure;
-      } catch (e) {
-        throw AuthFailure(authFailureCode: AuthFailureCode.unknown, authProviderType: AuthProviderType.google , message: e.toString());
       }
-      // Or use signInWithRedirect
-      // return await FirebaseAuth.instance.signInWithRedirect(googleProvider);
-    }
-
-
-
-  }
-
-  @override
-  Future<void> signOut() async {
-    try {
-      await _auth.signOut();
+    } on FirebaseAuthException catch (e) {
+      String code = AuthFailureCode().fromStringCode(e.code);
+      AuthFailure authFailure = AuthFailure(authFailureCode: code,
+          authProviderType: AuthProviderType.google,
+          message: e.message);
+      throw authFailure;
     } catch (e) {
-      throw AuthFailure(authFailureCode: AuthFailureCode.unknown, authProviderType: AuthProviderType.none, message: e.toString());
+      throw AuthFailure(authFailureCode: AuthFailureCode.unknown,
+          authProviderType: AuthProviderType.google,
+          message: e.toString());
     }
+    // Or use signInWithRedirect
+    // return await FirebaseAuth.instance.signInWithRedirect(googleProvider);
   }
+
+
+
+
+@override
+Future<void> signOut() async {
+  try {
+    await _auth.signOut();
+  } catch (e) {
+    throw AuthFailure(authFailureCode: AuthFailureCode.unknown,
+        authProviderType: AuthProviderType.none,
+        message: e.toString());
+  }
+}
 
 
 }
