@@ -21,7 +21,9 @@ class GoogleAuthBody extends ConsumerWidget {
     final AuthFailure authFailure = googleAuthState.authFailure;
 
     return Column(
+
       children: [
+
         if (isLoading)
           const CircularProgressIndicator()
         else
