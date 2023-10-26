@@ -28,7 +28,7 @@ abstract class AuthFeatureRepositoryBase{
 
   Future<void> verifySmsCode({
     required String smsCode,
-    String? verificationCode
+    String? verificationId
   });
 
   //Logs out from the service.
