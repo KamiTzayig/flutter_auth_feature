@@ -8,6 +8,8 @@ abstract class AuthFeatureRepositoryBase{
   //Notifies when the authentication status changes.
   Stream<AuthUser> get authUserStream;
 
+  Stream<bool> get smsSentStream;
+
   Future<void> signUpWithEmailAndPassword({
     required String email,
     required String password,
@@ -28,7 +30,6 @@ abstract class AuthFeatureRepositoryBase{
 
   Future<void> verifySmsCode({
     required String smsCode,
-    String? verificationId
   });
 
   //Logs out from the service.
