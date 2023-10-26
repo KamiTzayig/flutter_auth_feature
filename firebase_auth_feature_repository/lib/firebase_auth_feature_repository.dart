@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io' show Platform;
 
 import 'package:auth_feature_repository_base/auth_failure.dart';
@@ -19,7 +20,14 @@ class FirebaseAuthFeatureRepository extends AuthFeatureRepositoryBase {
 
   late FirebaseAuth _auth;
 
+
+  late ConfirmationResult confirmationResult;
+
   bool isWeb = false;
+  bool isMobile = false;
+  String verificationId = '';
+
+  StreamController<bool> _smsSentStreamController = StreamController<bool>();
 
   Future<void> initialize(FirebaseOptions? options) async {
     await Firebase.initializeApp(
@@ -27,8 +35,12 @@ class FirebaseAuthFeatureRepository extends AuthFeatureRepositoryBase {
     );
     _auth = FirebaseAuth.instance;
 
+    _smsSentStreamController.add(false);//init the stream
+
     try {
-      if (!Platform.isAndroid && !Platform.isIOS && !Platform.isFuchsia &&
+      if(Platform.isAndroid || Platform.isIOS || Platform.isFuchsia){
+        isMobile = true;
+      }else if (!Platform.isAndroid && !Platform.isIOS && !Platform.isFuchsia &&
           !Platform.isLinux && !Platform.isMacOS && !Platform.isWindows) {
         isWeb = true;
       }
@@ -41,12 +53,18 @@ class FirebaseAuthFeatureRepository extends AuthFeatureRepositoryBase {
   @override
   Stream<AuthUser> get authUserStream =>
       _auth.authStateChanges().map<AuthUser>((User? user) {
+        _smsSentStreamController.add(false);//reset the stream
         return FirebaseAuthUser.fromFirebaseUser(user: user);
       });
 
+@override
+  Stream<bool> get smsSentStream =>  _smsSentStreamController.stream;
   @override
   AuthUser get authUser =>
       FirebaseAuthUser.fromFirebaseUser(user: _auth.currentUser);
+
+
+
 
   @override
   Future<void> signUpWithEmailAndPassword(
@@ -99,7 +117,31 @@ class FirebaseAuthFeatureRepository extends AuthFeatureRepositoryBase {
   @override
   Future<void> signInWithPhoneNumber({required String phoneNumber}) async {
     try {
-      // Your implementation for phone number sign-in here
+          if(isMobile){
+
+            await _auth.verifyPhoneNumber(
+              phoneNumber: phoneNumber,
+              verificationCompleted: (PhoneAuthCredential credential) async {
+                await _auth.signInWithCredential(credential);
+              },
+
+              verificationFailed: (FirebaseAuthException e) {
+                  throw e;
+              },
+              codeSent: (String verificationId, int? resendToken) async {
+                // Update the UI - wait for the user to enter the SMS code
+                verificationId = verificationId;
+                _smsSentStreamController.add(true);
+                },
+              timeout: const Duration(seconds: 60),
+              codeAutoRetrievalTimeout: (String verificationId) {
+                // Auto-resolution timed out...
+              },
+            );
+
+          }else{
+            confirmationResult = await _auth.signInWithPhoneNumber(phoneNumber);
+          }      // Your implementation for phone number sign-in here
     } on FirebaseAuthException catch (e) {
       String code = AuthFailureCode().fromStringCode(e.code);
       AuthFailure authFailure = AuthFailure(authFailureCode: code,
@@ -116,7 +158,16 @@ class FirebaseAuthFeatureRepository extends AuthFeatureRepositoryBase {
   @override
   Future<void> verifySmsCode({required String smsCode}) async {
     try {
-      // Your implementation for verifying SMS code here
+      if(isMobile) {
+        final PhoneAuthCredential phoneAuthCredential =
+        PhoneAuthProvider.credential(
+            smsCode: smsCode, verificationId: verificationId);
+
+        await _auth.signInWithCredential(phoneAuthCredential);
+      }else{
+        await confirmationResult.confirm(smsCode);
+      }
+
     } on FirebaseAuthException catch (e) {
       String code = AuthFailureCode().fromStringCode(e.code);
       AuthFailure authFailure = AuthFailure(authFailureCode: code,
@@ -132,10 +183,9 @@ class FirebaseAuthFeatureRepository extends AuthFeatureRepositoryBase {
 
   @override
   Future<void> signInWithGoogle({List<String>? scopes}) async {
-
     // Create a new provider
     try {
-      if(isWeb) {
+      if (isWeb) {
         GoogleAuthProvider googleProvider = GoogleAuthProvider();
 
         googleProvider.addScope(
@@ -163,18 +213,16 @@ class FirebaseAuthFeatureRepository extends AuthFeatureRepositoryBase {
   }
 
 
-
-
-@override
-Future<void> signOut() async {
-  try {
-    await _auth.signOut();
-  } catch (e) {
-    throw AuthFailure(authFailureCode: AuthFailureCode.unknown,
-        authProviderType: AuthProviderType.none,
-        message: e.toString());
+  @override
+  Future<void> signOut() async {
+    try {
+      await _auth.signOut();
+    } catch (e) {
+      throw AuthFailure(authFailureCode: AuthFailureCode.unknown,
+          authProviderType: AuthProviderType.none,
+          message: e.toString());
+    }
   }
-}
 
 
 }
