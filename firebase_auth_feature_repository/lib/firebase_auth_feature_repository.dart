@@ -141,6 +141,9 @@ class FirebaseAuthFeatureRepository extends AuthFeatureRepositoryBase {
 
           }else{
             confirmationResult = await _auth.signInWithPhoneNumber(phoneNumber);
+            _smsSentStreamController.add(true);
+
+
           }      // Your implementation for phone number sign-in here
     } on FirebaseAuthException catch (e) {
       String code = AuthFailureCode().fromStringCode(e.code);
