@@ -10,7 +10,8 @@ class FirebasePhoneAuthState extends PhoneAuthState {
       required super.phoneNumber,
       required super.smsCode,
       required super.isLoading,
-      required super.authFailure});
+      required super.authFailure,
+      required super.smsSent});
 
   FirebasePhoneAuthState.unknown()
       : verificationId = '',
@@ -18,6 +19,7 @@ class FirebasePhoneAuthState extends PhoneAuthState {
           phoneNumber: '',
           smsCode: '',
           isLoading: false,
+          smsSent: false,
           authFailure: AuthFailure.unknown(),
         );
 
@@ -28,6 +30,7 @@ class FirebasePhoneAuthState extends PhoneAuthState {
     bool? isLoading,
     AuthFailure? authFailure,
     String? verificationId,
+    bool? smsSent,
   }) {
     return FirebasePhoneAuthState(
       verificationId: verificationId ?? this.verificationId,
@@ -35,6 +38,7 @@ class FirebasePhoneAuthState extends PhoneAuthState {
       smsCode: smsCode ?? this.smsCode,
       isLoading: isLoading ?? this.isLoading,
       authFailure: authFailure ?? this.authFailure,
+      smsSent: smsSent ?? this.smsSent,
     );
   }
 }

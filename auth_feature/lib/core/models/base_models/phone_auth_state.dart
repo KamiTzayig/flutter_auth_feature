@@ -8,19 +8,20 @@ import 'authState.dart';
   final String phoneNumber;
   final String smsCode;
 
+  final bool smsSent;
+
   PhoneAuthState({
     required this.phoneNumber,
     required this.smsCode,
-    required bool isLoading,
-    required AuthFailure authFailure,
-  }) : super(
-          isLoading: isLoading,
-          authFailure: authFailure,
-        );
+    required this.smsSent,
+    required super.isLoading,
+    required super.authFailure,
+  });
 
   PhoneAuthState.unknown():
         phoneNumber = '',
         smsCode = '',
+        smsSent = false,
         super(
           isLoading: false,
           authFailure: AuthFailure.unknown(),
@@ -31,14 +32,16 @@ import 'authState.dart';
     String? smsCode,
     bool? isLoading,
     AuthFailure? authFailure,
+    bool? smsSent,
   }) {
     return PhoneAuthState(
       phoneNumber: phoneNumber ?? this.phoneNumber,
       smsCode: smsCode ?? this.smsCode,
       isLoading: isLoading ?? this.isLoading,
       authFailure: authFailure ?? this.authFailure,
+      smsSent: smsSent ?? this.smsSent,
     );
   }
   @override
-  List<Object?> get props => [phoneNumber, smsCode, isLoading, authFailure];
+  List<Object?> get props => [phoneNumber, smsCode, isLoading, authFailure, smsSent];
 }
