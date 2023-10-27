@@ -1,7 +1,7 @@
-import 'package:auth_feature/core/models/base_models/phone_auth_state.dart';
 import 'package:auth_feature/phone_auth/presentation/widgets/insert_phone_number.dart';
 import 'package:auth_feature_repository_base/auth_failure.dart';
 import 'package:flutter/material.dart';
+import '../../../core/domain/models/base_models/phone_auth_state.dart';
 import '../../application/state.dart';
 import 'insert_sms_code.dart';
 

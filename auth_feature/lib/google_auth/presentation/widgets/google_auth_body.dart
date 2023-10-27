@@ -1,5 +1,4 @@
-import 'package:auth_feature/core/models/base_models/google_auth_state.dart';
-import 'package:auth_feature_repository_base/auth_failure.dart';
+import 'package:auth_feature/core/domain/models/base_models/google_auth_state.dart';import 'package:auth_feature_repository_base/auth_failure.dart';
 import 'package:flutter/material.dart';
 import '../../application/state.dart';
 

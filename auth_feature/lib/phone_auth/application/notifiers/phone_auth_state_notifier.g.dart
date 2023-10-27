@@ -7,7 +7,7 @@ part of 'phone_auth_state_notifier.dart';
 // **************************************************************************
 
 String _$phoneAuthStateNotifierHash() =>
-    r'd06e2637b8ec1586739ec6264e07864ce095becc';
+    r'23ac9413c1680b2fad01b421cacb082fcae0edc5';
 
 /// See also [PhoneAuthStateNotifier].
 @ProviderFor(PhoneAuthStateNotifier)

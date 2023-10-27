@@ -1,13 +1,13 @@
 import 'dart:async';
 
-import 'package:auth_feature/core/models/firebase_models/firebase_phone_auth_state.dart';
 import 'package:auth_feature_repository_base/auth_failure.dart';
 import 'package:auth_feature_repository_base/auth_feature_repository_base.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:firebase_auth_feature_repository/firebase_auth_feature_repository.dart';
 
 import '../../../auth_feature.dart';
-import '../../../core/models/base_models/phone_auth_state.dart';
+import '../../../core/domain/models/base_models/phone_auth_state.dart';
+import '../../../core/domain/models/firebase_models/firebase_phone_auth_state.dart';
 
 part 'phone_auth_state_notifier.g.dart';
 

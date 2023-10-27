@@ -1,8 +1,7 @@
-import 'package:auth_feature/core/models/base_models/emai_auth_state.dart';
-import 'package:auth_feature_repository_base/auth_failure.dart';
+import 'package:auth_feature/core/domain/models/base_models/emai_auth_state.dart';import 'package:auth_feature_repository_base/auth_failure.dart';
 import 'package:auth_feature_repository_base/auth_user_model.dart';
 import 'package:flutter/material.dart';
-import '../../../core/providers/auth_user_stream_provider.dart';
+import '../../../core/application/notifiers/auth_user_stream_notifier.dart';
 import '../../application/state.dart';
 
 
@@ -15,7 +14,7 @@ class EmailAuthBody extends ConsumerWidget {
     final EmailAuthState emailAuthState = ref.watch(
         emailAuthStateNotifierProvider);
     final bool isLoading = emailAuthState.isLoading;
-    final AsyncValue<AuthUser> user = ref.watch(authUserStreamProvider);
+    final AsyncValue<AuthUser> user = ref.watch(authUserStreamNotifierProvider);
     final AuthFailure authFailure = emailAuthState.authFailure;
 
     return Column(
@@ -65,7 +64,7 @@ class EmailAuthBody extends ConsumerWidget {
               ElevatedButton(
                 onPressed: () {
                   ref
-                      .read(emailAuthStateNotifierProvider.notifier)
+                      .read(authUserStreamNotifierProvider.notifier)
                       .signOut();
                 },
                 child: const Text("Sign Out"),

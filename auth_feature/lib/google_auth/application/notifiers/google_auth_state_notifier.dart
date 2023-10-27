@@ -1,5 +1,4 @@
-import 'package:auth_feature/core/models/base_models/google_auth_state.dart';
-import 'package:auth_feature_repository_base/auth_failure.dart';
+import 'package:auth_feature/core/domain/models/base_models/google_auth_state.dart';import 'package:auth_feature_repository_base/auth_failure.dart';
 import 'package:auth_feature_repository_base/auth_feature_repository_base.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 

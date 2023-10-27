@@ -1,5 +1,4 @@
-import 'package:auth_feature/core/models/base_models/emai_auth_state.dart';
-import 'package:auth_feature_repository_base/auth_failure.dart';
+import 'package:auth_feature/core/domain/models/base_models/emai_auth_state.dart';import 'package:auth_feature_repository_base/auth_failure.dart';
 import 'package:auth_feature_repository_base/auth_feature_repository_base.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -38,17 +37,6 @@ class EmailAuthStateNotifier extends _$EmailAuthStateNotifier {
     try {
       await repository.signUpWithEmailAndPassword(
           email: state.email, password: state.password);
-      state = state.copyWith(isLoading: false);
-    } on AuthFailure catch (e) {
-      state = state.copyWith(authFailure: e, isLoading: false);
-    }
-  }
-
-  Future<void> signOut() async{
-    state = state.copyWith(isLoading: true);
-    AuthFeatureRepositoryBase repository=  AuthFeature.instance.repository;
-    try {
-      await repository.signOut();
       state = state.copyWith(isLoading: false);
     } on AuthFailure catch (e) {
       state = state.copyWith(authFailure: e, isLoading: false);
