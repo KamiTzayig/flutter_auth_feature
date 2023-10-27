@@ -1,15 +1,5 @@
-import 'package:auth_feature_repository_base/auth_feature_repository_base.dart';
-
-class AuthFeature{
-  static final AuthFeature _singleton = AuthFeature._internal();
-  AuthFeature._internal();
-  static AuthFeature get instance => _singleton;
-
-  late AuthFeatureRepositoryBase _repository;
-
-  void initialize(AuthFeatureRepositoryBase repository){
-    _repository = repository;
-  }
-
-  AuthFeatureRepositoryBase get repository => _repository;
-}
+export 'src/phone_auth/phone_auth.dart';
+export 'src/google_auth/google_auth.dart';
+export 'src/email_auth/email_auth.dart';
+export 'src/core/auth_feature_class.dart';
+export 'src/core/auth_feature_core.dart';
