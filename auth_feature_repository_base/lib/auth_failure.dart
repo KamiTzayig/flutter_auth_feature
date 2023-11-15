@@ -66,6 +66,7 @@ class AuthFailureCode {
         return weak_password;
       case 'account-exists-with-different-credential':
         return account_exists_with_different_credential;
+      case 'invalid-login-credentials':
       case 'invalid-credential':
         return invalid_credential;
       case 'user-disabled':
